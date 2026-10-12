@@ -1,21 +1,34 @@
 #!/bin/bash
 
-echo "Введите числа через пробел:"
-read array
+sortirovka() {
+    local array=("$@")
+    local n=${#array[@]}
+    local i j x
 
-if [ -z "$array" ]; then
+    for ((i = 0; i < n - 1; i++)); do
+        for ((j = 0; j < n - i - 1; j++)); do
+            if [ "${array[j]}" -gt "${array[j+1]}" ]; then
+                x="${array[j]}"
+                array[j]="${array[j+1]}"
+                array[j+1]="$x"
+            fi
+        done
+    done
+
+    echo "${array[@]}"
+}
+
+if [ $# -eq 0 ]; then
     echo "Error"
     exit 1
 fi
 
-numbers=($array)
-
-for num in "${numbers[@]}"; do
+for num in "$@"; do
     if ! [[ "$num" =~ ^-?[0-9]+$ ]]; then
         echo "Error"
         exit 1
     fi
 done
 
-sorted=$(printf "%s\n" "${numbers[@]}" | sort -n)
-echo "Sorted: $(echo $sorted | tr '\n' ' ')"
+sorted=$(sortirovka "$@")
+echo "Sorted: $sorted"
